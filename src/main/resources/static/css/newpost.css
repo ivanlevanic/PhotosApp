@@ -1,0 +1,59 @@
+.main {
+    padding: 20px;
+}
+
+.left-col {
+    width: 100%;
+}
+
+.post {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.post-image {
+    width: 100%;
+    height: auto;
+}
+
+.post-content {
+    margin-top: 20px;
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="file"],
+textarea,
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0069d9;
+}

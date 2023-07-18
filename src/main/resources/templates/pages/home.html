@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head" ></head>
+
+<body>
+<div th:replace="fragments :: navigation-bar"></div>
+
+<div th:replace="fragments :: header"></div>
+
+<style>
+    .btn-color{
+        background-color: #0e1c36;
+        color: #fff;
+    }
+
+    body {
+        text-align: center;
+    }
+    div.form
+    {
+        display: block;
+        text-align: center;
+    }
+    form
+    {
+        display: inline-block;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .profile-image-pic{
+        height: 200px;
+        width: 200px;
+        object-fit: cover;
+    }
+
+    .cardbody-color{
+        background-color: #ebf2fa;
+    }
+
+    a{
+        text-decoration: none;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card my-5 text-center">
+                <div th:if="${param.error}" class="error" >No streaming service has this show</div>
+
+                <div class="text-center">
+                    <img th:src="@{/images/tvtime-logo.png.webp}" class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+                         width="200px" alt="profile">
+                </div>
+                <label for="product-select" class="find" th:text="#{msg.findService}+':'"></label>
+
+
+                <form method="get" th:object="${tvShowData}" th:action="@{/home/show}" class="card-body p-lg-5">
+                    <select class="form-select" th:field="*{name}" id="product-select">
+                        <option value="" th:text="#{msg.selectShow}"></option>
+                        <option value="got" th:text="#{msg.got}"></option>
+                        <option value="fargo" th:text="#{msg.fargo}"></option>
+                        <option value="hotd" th:text="#{msg.hotd}"></option>
+                        <option value="lost" th:text="#{msg.lost}"></option>
+                        <option value="blackmirror" th:text="#{msg.blackmirror}"></option>
+                        <option value="euphoria" th:text="#{msg.euphoria}"></option>
+                    </select>
+                    <br>
+                    <input class="btn btn-primary" type="submit" value="Search">
+                    <br>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments :: js"></div>
+</body>
+</html>

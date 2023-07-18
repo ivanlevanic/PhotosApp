@@ -1,0 +1,34 @@
+body {
+    background-color: aliceblue !important;
+}
+.error {
+    color: red;
+}
+.success {
+    color: green;
+}
+table {
+    border: 1px solid black;
+}
+tr, th, td {
+    border: 1px solid black !important;
+    padding: 8px;
+}
+select {
+    width: fit-content !important;
+}
+.logout {
+    padding: 1em 0;
+}
+.find {
+    font-size: larger;
+}
+
+#logo-title img{
+    width: 100px;
+    height: 100px;
+}
+
+#logo-title h1{
+    display: inline;
+}

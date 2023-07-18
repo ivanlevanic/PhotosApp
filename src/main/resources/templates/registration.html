@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments :: head" ></head>
+<body>
+    <div th:replace="fragments :: header"></div>
+    <div th:replace="fragments :: nav-bar"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card my-5">
+                    <form method="post" th:action="@{/registration}" class="card-body cardbody-color p-lg-5">
+                        <div class="text-center">
+                            <img th:src="@{/images/tvtime-logo.png.webp}" class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+                                 width="200px" alt="profile">
+                        </div>
+
+                        <div th:if="${param.error}" class="login-error">Unable to register. Please check the entered information.</div>
+                        <div th:if="${param.success}" class="login-success">You have successfully registered.</div>
+                        <div th:if="${#fields.hasErrors('user.username')}" class="login-error">Username already exists. Choose a unique username.</div>
+
+                        <div class="mb-3">
+                            <span>First Name</span>
+                            <input type="text" class="form-control" id="firstName" name="firstName">
+                        </div>
+                        <div class="mb-3">
+                            <span>Last Name</span>
+                            <input type="text" class="form-control" id="lastName" name="lastName">
+                        </div>
+                        <div class="mb-3">
+                            <span>Email</span>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="mb-3">
+                            <span>Username</span>
+                            <input type="text" class="form-control" id="username" name="username">
+                        </div>
+                        <div class="mb-3">
+                            <span>Password</span>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                        <div class="mb-3">
+                            <span>Plan</span>
+                            <select class="form-control" id="plan" name="plan">
+                                <option value="FREE">FREE</option>
+                                <option value="PRO">PRO</option>
+                                <option value="GOLD">GOLD</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" value="Register" class="btn btn-color px-5 mb-5 w-100" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments :: js"></div>
+</body>
+</html>
