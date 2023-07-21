@@ -36,10 +36,11 @@
                             <p class="username" th:text="${username}"></p>
                         </div>
                     </div>
-                    <!--<img class="post-image" th:src="@{'data:image/png;base64,' + ${#strings.encodeBase64(photo.photo)}}" th:alt="${photo.description}">
-                    <img class="post-image" th:src="@{'/images/' + ${photo.photo}}" th:alt="${photo.description}">-->
-                    <img th:src="@{/images/image.jpg}" class="post-image" alt="">
+                    <!--<img class="post-image" th:src="@{'data:image/png;base64,' + ${#strings.encodeBase64(photo.photo)}}" th:alt="${photo.description}">-->
+                    <img class="post-image" th:src="@{'/images/' + ${photo.photo}}" th:alt="${photo.description}">
+                    <!--<img th:src="@{/images/image.jpg}" class="post-image" alt="">-->
                     <div class="post-content">
+                        <p th:text="${photo.photo}"></p>
                         <p class="hashtags" th:text="${photo.hashtags}"></p>
                         <p class="description">
                             <span th:text="${username}"></span>

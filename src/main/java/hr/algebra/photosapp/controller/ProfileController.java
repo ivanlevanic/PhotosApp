@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
@@ -68,7 +69,7 @@ public class ProfileController {
         User user = userRepository.getUserByUsername(username);
         Profile profile = profileRepository.getProfileByUsername(username);
         Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profile.getId());
-        Consumption consumption = consumptionRepository.getConsumptionByProfileId(profile.getId());
+        Consumption consumption = consumptionRepository.getConsumptionByProfileId(profile.getId(), LocalDate.now());
         PackagePlan packagePlan = packageRepository.getPackageByPlan(subscription.getPackagePlan()); //
 
         model.addAttribute("user", user);
@@ -113,6 +114,7 @@ public class ProfileController {
 
         String username = principal.getName();
         Long profileId = profileRepository.getProfileIdByUsername(username);
+        Consumption consumption = new Consumption();
         Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profileId);
         PackagePlan chosenPlan = packageRepository.getPackageByPlan(subscription.getPackagePlan());
         Long uploadSizeLimit = chosenPlan.getUploadSize();
@@ -122,7 +124,19 @@ public class ProfileController {
                 return "redirect:/profile/post?error=Image size exceeds the upload limit. Please resize the image or upgrade your plan.";
             }
 
-            String fileName = java.util.UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
+            try {
+                consumption = consumptionRepository.getConsumptionByProfileId(profileId, LocalDate.now());
+            } catch (Exception e) {
+                Consumption consumptionToInsert = new Consumption(profileId, LocalDate.now(),0);
+                consumptionRepository.save(consumptionToInsert);
+                consumption = consumptionRepository.getConsumptionByProfileId(profileId, LocalDate.now());
+            }
+
+            if(consumption.getNumberOfUploadedPhotos() >= (chosenPlan.getDailyUploadLimit() - 1)) {
+                return "redirect:/profile/post?error=You already reached your daily upload limit. Please try again tomorrow or upgrade your plan.";
+            }
+
+            String fileName =  image.getOriginalFilename(); //java.util.UUID.randomUUID().toString() + "-" +
             String filePath = uploadDirectory + fileName;
 
             Path file = Paths.get(uploadDirectory + fileName);
@@ -133,6 +147,8 @@ public class ProfileController {
             Photo photo1 = photoRepository.getPhotoByName(fileName);
 
             parseHashtags(photo1.getId(), hashtags);
+            int uploadedPhotos = consumption.getNumberOfUploadedPhotos() + 1;
+            consumptionRepository.updateNumberOfUploadedPhotos(consumption.getId(), uploadedPhotos);
         }
         return "redirect:/profile/post";
     }

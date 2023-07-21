@@ -1,13 +1,7 @@
 package hr.algebra.photosapp.controller;
 
-import hr.algebra.photosapp.domain.Authority;
-import hr.algebra.photosapp.domain.Profile;
-import hr.algebra.photosapp.domain.Subscription;
-import hr.algebra.photosapp.domain.User;
-import hr.algebra.photosapp.repository.AuthorityRepository;
-import hr.algebra.photosapp.repository.ProfileRepository;
-import hr.algebra.photosapp.repository.SubscriptionRepository;
-import hr.algebra.photosapp.repository.UserRepository;
+import hr.algebra.photosapp.domain.*;
+import hr.algebra.photosapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 @Controller
@@ -27,16 +22,20 @@ public class RegistrationController {
     private final ProfileRepository profileRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final AuthorityRepository authorityRepository;
+    private final ConsumptionRepository consumptionRepository;
+
 
     @Autowired
     public RegistrationController(UserRepository userRepository,
                                   ProfileRepository profileRepository,
                                   SubscriptionRepository subscriptionRepository,
-                                  AuthorityRepository authorityRepository) {
+                                  AuthorityRepository authorityRepository,
+                                  ConsumptionRepository consumptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
+        this.consumptionRepository = consumptionRepository;
     }
 
     @GetMapping("/register")
@@ -63,6 +62,8 @@ public class RegistrationController {
         profileRepository.save(profile);
         Subscription subscription = new Subscription(profileRepository.getProfileIdByUsername(user.getUsername()), plan, Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), plan);
         subscriptionRepository.save(subscription);
+        Consumption consumption = new Consumption(profileRepository.getProfileIdByUsername(user.getUsername()), LocalDate.now(), 0);
+        consumptionRepository.save(consumption);
 
         model.addAttribute("success", true);
         return "redirect:/login?success";

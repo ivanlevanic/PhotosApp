@@ -19,9 +19,9 @@ insert into profile (id, username) values
     (2, 'ivan');
 
 insert into package (plan, price, uploadSize, dailyUploadLimit) values
-    ('FREE', 0, 5.5, 3),
-    ('PRO', 5, 10, 10),
-    ('GOLD', 10, 15, 150);
+    ('FREE', 0, 800000, 3),
+    ('PRO', 5, 1200000, 10),
+    ('GOLD', 10, 2000000, 150);
 
 insert into subscription (id, profileId, packagePlan) values
     (101, 2, 'FREE');
@@ -30,4 +30,4 @@ insert into consumption (id, profileId, dayOfTheMonth, numberOfUploadedPhotos) v
     (111, 2, '2022-12-07', 0);
 
 insert into photo (id, profileId, photo, description, uploadTime, size, hashtags) values
-    (1, 2,  '3bea08c6-b102-461d-852e-7e2c275a6503-SamplePicture-Koala.jpg', 'da da da', '2023-07-18 16:45:36.138016', 780892, '#ne')
+    (1, 2,  'SamplePicture-Koala.jpg', 'da da da', '2023-07-18 16:45:36.138016', 780892, '#ne')
