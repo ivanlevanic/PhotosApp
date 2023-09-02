@@ -1,13 +1,11 @@
 package hr.algebra.photosapp.controller;
 
-import hr.algebra.photosapp.domain.Hashtag;
+import hr.algebra.photosapp.domain.LoggingSystem;
 import hr.algebra.photosapp.domain.Photo;
 import hr.algebra.photosapp.domain.Profile;
 import hr.algebra.photosapp.domain.Subscription;
-import hr.algebra.photosapp.repository.HashtagRepository;
-import hr.algebra.photosapp.repository.PhotoRepository;
-import hr.algebra.photosapp.repository.ProfileRepository;
-import hr.algebra.photosapp.repository.SubscriptionRepository;
+import hr.algebra.photosapp.repository.*;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,14 +29,21 @@ public class MainController {
     private final SubscriptionRepository subscriptionRepository;
     private final PhotoRepository photoRepository;
     private final HashtagRepository hashtagRepository;
+    private final LoggingSystemRepository loggingSystemRepository;
+    private final AuthorityRepository authorityRepository;
+
     public MainController(ProfileRepository profileRepository,
                           SubscriptionRepository subscriptionRepository,
                           PhotoRepository photoRepository,
-                          HashtagRepository hashtagRepository) {
+                          HashtagRepository hashtagRepository,
+                          LoggingSystemRepository loggingSystemRepository,
+                          AuthorityRepository authorityRepository) {
         this.profileRepository = profileRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.photoRepository = photoRepository;
         this.hashtagRepository = hashtagRepository;
+        this.loggingSystemRepository = loggingSystemRepository;
+        this.authorityRepository = authorityRepository;
     }
 
     @GetMapping("")
@@ -48,27 +55,32 @@ public class MainController {
     public String homepage(Model model, @RequestParam(value = "searchText", required = false) String searchText,
                            @RequestParam(value = "searchOption", required = false) String searchOption) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Boolean isUserAdmin = false;
+        if (authentication.getName() != "anonymousUser") {
+            isUserAdmin = authorityRepository.getAuthorityByUsername(authentication.getName());
+        }
+        if(!isUserAdmin) {
+            if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+                String username = authentication.getName();
+                Profile profile = profileRepository.getProfileByUsername(username);
+                Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profile.getId());
 
-        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
-            String username = authentication.getName();
-            Profile profile = profileRepository.getProfileByUsername(username);
-            Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profile.getId());
+                if (subscription.getPackagePlan() != null && subscription.getNewPackage() != null && !subscription.getPackagePlan().equals(subscription.getNewPackage())) {
+                    Date lastRefreshDate = subscription.getLastRefreshDate();
+                    Date dateOfLastChange = subscription.getDateOfLastChange();
 
-            if (subscription.getPackagePlan() != null && subscription.getNewPackage() != null && !subscription.getPackagePlan().equals(subscription.getNewPackage())) {
-                Date lastRefreshDate = subscription.getLastRefreshDate();
-                Date dateOfLastChange = subscription.getDateOfLastChange();
-
-                if (dateOfLastChange != null && !isSameDay(lastRefreshDate, dateOfLastChange)) {
-                    subscription.setLastRefreshDate(Calendar.getInstance().getTime());
-                    subscription.setDateOfLastChange(Calendar.getInstance().getTime());
-                    subscription.setPackagePlan(subscription.getNewPackage());
-                    subscriptionRepository.saveAfterPlanChange(subscription);
+                    if (dateOfLastChange != null && !isSameDay(lastRefreshDate, dateOfLastChange)) {
+                        subscription.setLastRefreshDate(Calendar.getInstance().getTime());
+                        subscription.setDateOfLastChange(Calendar.getInstance().getTime());
+                        subscription.setPackagePlan(subscription.getNewPackage());
+                        subscriptionRepository.saveAfterPlanChange(subscription);
+                    }
                 }
-            } //postaviti ta 2 datuma na danasnji prilikom registracije
-            model.addAttribute("subscription", subscription);
+                model.addAttribute("subscription", subscription);
+            }
         }
         model.addAttribute("username", authentication.getName());
-        List<Photo> photos = photoRepository.getAllPhotos();
+        List<Photo> photos = photoRepository.getAllPhotosWithUsername();
 
         if (searchText != null && searchOption != null) {
             if (searchOption.equals("user")) {
@@ -91,9 +103,20 @@ public class MainController {
                 }
             }
         }
-
+        LoggingSystem loggingSystem = new LoggingSystem(authentication.getName(), "opened the homepage", LocalDateTime.now());
+        loggingSystemRepository.save(loggingSystem);
         model.addAttribute("photos", photos);
         return "pages/homepage";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/activity/statistics")
+    public String usage(Model model, Principal principal) {
+        LoggingSystem loggingSystemToInsert = new LoggingSystem(principal.getName(), "opened profile statistics page", LocalDateTime.now());
+        loggingSystemRepository.save(loggingSystemToInsert);
+        List<LoggingSystem> loggingSystem = loggingSystemRepository.getAllActivity();
+        model.addAttribute("loggingSystem", loggingSystem);
+        return "pages/activity";
     }
 
     private boolean isSameDay(Date date1, Date date2) {

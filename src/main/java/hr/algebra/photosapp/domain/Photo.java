@@ -5,7 +5,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "photo")
@@ -15,10 +14,8 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //@Lob
     @Column(name = "photo", nullable = false)
     private String photo;
-    //private byte[] photo;
 
     @Column(name = "profileId", nullable = false)
     private Long profileId;
@@ -37,6 +34,10 @@ public class Photo {
     @Size(max = 250)
     private String hashtags;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profileId", referencedColumnName = "id", insertable = false, updatable = false)
+    private Profile profile;
+
     public Photo() {
     }
 
@@ -47,6 +48,61 @@ public class Photo {
         this.uploadTime = uploadTime;
         this.size = size;
         this.hashtags = checkHashtagSyntax(hashtags);
+    }
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getProfileId() {
+        return profileId;
+    }
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getUploadTime() {
+        return uploadTime;
+    }
+    public void setUploadTime(LocalDateTime uploadTime) {
+        this.uploadTime = uploadTime;
+    }
+
+    public long getSize() {
+        return size;
+    }
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public String getHashtags() { return hashtags; }
+    public void setHashtags(String hashtags) { this.hashtags = hashtags; }
+    public void setUnparsedHashtags(String hashtags) { this.hashtags =  checkHashtagSyntax(hashtags);}
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    // Setter method for the Profile entity (optional, depending on use case)
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
     private String checkHashtagSyntax(String hashtags) {
@@ -78,64 +134,4 @@ public class Photo {
 
         return hashtags;
     }
-
-
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getProfileId() {
-        return profileId;
-    }
-
-    public void setProfileId(Long profileId) {
-        this.profileId = profileId;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-    //public byte[] getPhoto() {return photo;}
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-    //    public void setPhoto(byte[] photo) {
-    //        this.photo = photo;
-    //    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getUploadTime() {
-        return uploadTime;
-    }
-
-    public void setUploadTime(LocalDateTime uploadTime) {
-        this.uploadTime = uploadTime;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public String getHashtags() { return hashtags; }
-    public void setHashtags(String hashtags) { this.hashtags = hashtags; }
-
-    private void setUnparsedHashtags (String hashtags) { this.hashtags =  checkHashtagSyntax(hashtags);}
 }

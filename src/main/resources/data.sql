@@ -30,4 +30,7 @@ insert into consumption (id, profileId, dayOfTheMonth, numberOfUploadedPhotos) v
     (111, 2, '2022-12-07', 0);
 
 insert into photo (id, profileId, photo, description, uploadTime, size, hashtags) values
-    (1, 2,  'SamplePicture-Koala.jpg', 'da da da', '2023-07-18 16:45:36.138016', 780892, '#ne')
+    (1, 2,  'SamplePicture-Koala.jpg', 'da da da', '2023-07-18 16:45:36.138016', 780892, '#ne');
+
+insert into hashtag (id, photoId, name) values
+    (1, 1, 'ne');

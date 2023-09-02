@@ -18,4 +18,10 @@ public class JdbcAuthorityRepository implements AuthorityRepository {
         jdbcTemplate.update(sql, authority.getAuthority(), authority.getUsername());
     }
 
+    public Boolean getAuthorityByUsername(String username) {
+        String sql = "SELECT COUNT(*) FROM authorities WHERE username = ? AND authority = 'ROLE_ADMIN'";
+        int count = jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
+        return count > 0;
+    }
+
 }

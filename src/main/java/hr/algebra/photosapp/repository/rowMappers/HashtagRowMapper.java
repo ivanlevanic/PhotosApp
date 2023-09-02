@@ -11,8 +11,8 @@ public class HashtagRowMapper implements RowMapper<Hashtag> {
     public Hashtag mapRow(ResultSet rs, int rowNum) throws SQLException {
         Hashtag hashtag = new Hashtag();
         hashtag.setId(rs.getLong("id"));
-        // Set other properties of the hashtag
-
+        hashtag.setName(rs.getString("name"));
+        hashtag.setPhotoId(rs.getLong("photoId"));
         return hashtag;
     }
 }

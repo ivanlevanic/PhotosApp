@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments :: head" ></head>
+<body>
+  <div th:replace="fragments :: js"></div>
+  <div th:replace="fragments :: nav-bar"></div>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      color: #7099ba; /* Blue color for the heading */
+      margin-top: 15px;
+    }
+
+    .blueish-table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.2); /* Blueish box shadow */
+    }
+
+    .blueish-table th, .blueish-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #007bff; /* Blueish border bottom */
+    }
+
+    .blueish-table th {
+      background-color: #7099ba; /* Blueish header background color */
+      color: #fff; /* White text color for the header */
+    }
+
+    .blueish-table tbody tr:nth-child(even) {
+      background-color: #f1f1f1; /* Light gray background color for even rows */
+    }
+
+    .blueish-table tbody tr:hover {
+      background-color: #e0e0e0; /* Darker gray background color on hover */
+    }
+
+  </style>
+
+  <h2>Activity Statistics</h2>
+  <table class="blueish-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Action</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="log : ${loggingSystem}">
+        <td th:text="${log.user}"></td>
+        <td th:text="${log.action}"></td>
+        <td th:text="${log.time}"></td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 package hr.algebra.photosapp.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,6 +22,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(DataSource dataSource){
         this.dataSource = dataSource;
     }
+
+    @Autowired
+    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
+    @Autowired
+    private CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,9 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/homepage", true)
+                .successHandler(customAuthenticationSuccessHandler) // Use custom AuthenticationSuccessHandler
+                //.defaultSuccessUrl("/homepage", true)
                 .and()
                 .logout()
+                .logoutSuccessHandler(customLogoutSuccessHandler) // Use custom LogoutSuccessHandler
                 .logoutSuccessUrl("/login?logout")
                 .and()
                 .csrf()

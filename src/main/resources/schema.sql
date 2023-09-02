@@ -64,4 +64,11 @@ create table if not exists consumption (
    constraint fk_consumption_profile foreign key(profileId) references profile(id)
     );
 
+create table if not exists logging_system (
+  id identity,
+  user varchar(50) not null,
+  action varchar(200) not null,
+  time datetime not null
+);
+
 

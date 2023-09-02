@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuthorityRepository {
     public void save(Authority authority);
+    public Boolean getAuthorityByUsername(String username);
 }

@@ -5,37 +5,13 @@
   <div th:replace="fragments :: nav-bar"></div>
   <link th:href="@{/css/post.css}" rel="stylesheet" />
 
-  <!--<section class="main">
-    <div class="wrapper">
-      <div class="left-col">
-        <div th:each="photo : ${photos}" class="post">
-          <div class="info">
-            <div class="user">
-              <p class="username" th:text="${username}"></p>
-            </div>
-          </div>
-          <--<img class="post-image" th:src="@{'data:image/png;base64,' + ${#strings.encodeBase64(photo.photo)}}" th:alt="${photo.description}">
-          <img class="post-image" th:src="@{'/images/' + ${photo.photo}}" th:alt="${photo.description}">--
-          <img th:src="@{/images/image.jpg}" class="post-image" alt="">
-          <div class="post-content">
-            <p class="hashtags" th:text="${photo.hashtags}"></p>
-            <p class="description">
-              <span th:text="${username}"></span>
-              <span th:text="${photo.description}"></span>
-            </p>
-            <p class="post-time" th:text="${photo.uploadTime}"></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>-->
   <section class="main">
     <div class="wrapper">
       <div class="left-col">
         <div th:each="photo : ${photos}" class="post">
           <div class="info">
             <div class="user">
-              <p class="username" th:text="${username}"></p>
+              <p class="username" th:text="${photo.profile.username}"></p>
             </div>
           </div>
           <!--<img class="post-image" th:src="@{'data:image/png;base64,' + ${#strings.encodeBase64(photo.photo)}}" th:alt="${photo.description}">
@@ -57,21 +33,6 @@
     </div>
   </section>
 
-  <style>
-    .edit-button {
-      margin-left: 10px;
-      padding: 8px 16px;
-      background-color: #B6D0E2;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .edit-button:hover {
-      background-color: #A7C7E7;
-    }
-  </style>
 
   <script>
     function enableEdit() {
@@ -104,7 +65,9 @@
               });
     }
   </script>
-
+  <!--
+  <script type="module" th:src="@{/js/main.js}"></script>
+  <script type="module" th:src="@{/js/observer.js}"></script>-->
 
 </body>
 </html>

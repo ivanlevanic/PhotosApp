@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 public interface ProfileRepository {
     public Long getProfileIdByUsername(String username);
 
-    public Profile findByUsername(String username);
+    //public Profile findByUsername(String username);
 
     public Profile getProfileByUsername(String username);
 

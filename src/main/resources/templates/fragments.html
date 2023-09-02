@@ -37,11 +37,11 @@
                 <div class="navbar-nav">
                     <a class="navbar-brand" href="#" style="margin-left: 40px">PhotosApp</a>
                     <a class="nav-item nav-link" th:href="@{/homepage}">Home</a>
-                    <a class="nav-item nav-link" th:href="@{/profiles/statistics}" style="margin-left: auto;" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">Statistics</a>
+                    <a class="nav-item nav-link" th:href="@{/activity/statistics}" style="margin-left: auto;" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">Statistics</a>
                 </div>
                 <div>
                     <div class="dropdown">
-                        <a class="nav-item nav-link" href="#" style="margin-left: auto;">Profile</a>
+                        <a class="nav-item nav-link black-link" href="#" style="margin-left: auto;">Profile</a>
                         <div class="dropdown-content">
                             <a th:if="${not #authorization.expression('isAuthenticated()')}" href="#" th:href="@{/login}">Login</a>
                             <a th:if="${not #authorization.expression('isAuthenticated()')}" href="#" th:href="@{/register}">Register</a>
@@ -50,6 +50,7 @@
                             <a href="#" sec:authorize="isAuthenticated()" th:href="@{/profile/data}">Profile info</a>
                             <!--<a href="#" sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">Logout</a>-->
                             <form method="post" th:action="@{/logout}" style="display: inline;">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                 <button type="submit" class="logout-button" sec:authorize="isAuthenticated()">Logout</button>
                             </form>
                         </div>

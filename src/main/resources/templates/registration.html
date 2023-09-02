@@ -18,6 +18,9 @@
                         <div th:if="${param.error}" class="login-error">Unable to register. Please check the entered information.</div>
                         <div th:if="${param.success}" class="login-success">You have successfully registered.</div>
                         <div th:if="${#fields.hasErrors('user.username')}" class="login-error">Username already exists. Choose a unique username.</div>
+                        <div th:if="${errorMessages}" class="alert alert-danger" role="alert">
+                            <p th:text="${errorMessages}"></p>
+                        </div>
 
                         <div class="mb-3">
                             <span>First Name</span>

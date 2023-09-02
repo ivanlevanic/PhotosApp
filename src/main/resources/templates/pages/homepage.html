@@ -33,7 +33,8 @@
                 <div th:each="photo : ${photos}" class="post">
                     <div class="info">
                         <div class="user">
-                            <p class="username" th:text="${username}"></p>
+                            <a class="black-link" th:href="@{/profile/admin-view/{username}(username=${photo.profile.username})}" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:text="${photo.profile.username}"/>
+                            <p class="username" th:unless="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:text="${photo.profile.username}"></p>
                         </div>
                     </div>
                     <!--<img class="post-image" th:src="@{'data:image/png;base64,' + ${#strings.encodeBase64(photo.photo)}}" th:alt="${photo.description}">-->
@@ -47,7 +48,7 @@
                             <span th:text="${photo.description}"></span>
                         </p>
                         <p class="post-time" th:text="${photo.uploadTime}"></p>
-                        <a th:href="@{/download-image(photo.photo)}" download="photo.jpg">
+                        <a th:href="@{/images/{photoName}(photoName=${photo.photo})}" download="photo.jpg">
                             Download
                         </a>
                     </div>

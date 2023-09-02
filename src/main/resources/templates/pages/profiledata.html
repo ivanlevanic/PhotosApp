@@ -3,64 +3,55 @@
 <head th:replace="fragments :: head" ></head>
 <body>
   <link th:href="@{/css/post.css}" rel="stylesheet" />
+  <link th:href="@{/css/profiledata.css}" rel="stylesheet" />
   <div th:replace="fragments :: nav-bar"></div>
 
-  <style>
-    .inline {
-      display: inline;
-    }
-  </style>
-  <style>
-    .custom-button {
-      display: inline-block;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-    }
+  <div >
+    <table class="blueish-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Your usage</th>
+          <th>Your plan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Name of the plan</th>
+          <td></td>
+          <td th:text="${packagePlan.plan}"></td>
+        </tr>
+        <tr>
+          <th>Number of uploaded photos</th>
+          <td th:text="${consumption.numberOfUploadedPhotos}"></td>
+          <td th:text="${packagePlan.dailyUploadLimit}"></td>
+        </tr>
+        <tr>
+          <th>Maximum photo size</th>
+          <td></td>
+          <td th:text="${packagePlan.uploadSize}"></td>
+        </tr>
+      </tbody>
+    </table>
 
-    .custom-button:hover {
-      background-color: #0056b3;
-    }
-  </style>
-
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <div class="card my-5">
-          <form method="post" th:action="@{/profile/data/change-plan}" class="card-body cardbody-color p-lg-5">
-            <div th:if="${param.error}" class="login-error">Unable to register. Please check the entered information.</div>
-            <div th:if="${param.success}" class="login-success">You have successfully registered.</div>
-            <div class="inline">
-              <h4>Hello</h4>
-              <h4 th:text="${user.firstName}"></h4>
-            </div>
-            <div>
-              <h4>You are currently using </h4>
-              <h4 th:text="${packagePlan.plan}"/>
-              <h4> plan. Upgrade your plan: </h4>
-            </div>
-            <div class="mb-3">
-              <select class="form-control" id="plan" name="plan">
-                <option value="FREE">FREE</option>
-                <option value="PRO">PRO</option>
-                <option value="GOLD">GOLD</option>
-              </select>
-            </div>
-            <div class="text-center">
-              <input type="submit" value="Change plan" class="custom-button" />
-            </div>
-          </form>
-        </div>
+    <form method="post" th:action="@{/profile/data/change-plan}" class="card-body cardbody-color p-lg-5">
+      <div class="inline">
+        <h4>Upgrade your plan: </h4>
       </div>
-    </div>
+      <div>
+        <select class="form-control" id="plan" name="plan">
+          <option value="FREE">FREE</option>
+          <option value="PRO">PRO</option>
+          <option value="GOLD">GOLD</option>
+        </select>
+      </div>
+      <div> <!--class="text-center"-->
+        <input type="submit" value="Change plan" class="custom-button" />
+      </div>
+    </form>
   </div>
+
+
 
   <div th:replace="fragments :: js"></div>
 </body>
