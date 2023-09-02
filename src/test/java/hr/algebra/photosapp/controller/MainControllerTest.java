@@ -95,7 +95,7 @@ public class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("registration"));
 
-        User registriraniUser = userRepository.findByUsername("testUser");
+        User registriraniUser = userRepository.findByUsername("testetsetste");
         assertNotNull(registriraniUser); //??????
     }
 
