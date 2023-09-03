@@ -24,7 +24,7 @@
             </p>
             <p class="post-time" id="time" th:text="${photo.uploadTime}"></p>
             <div>
-              <button type="button" class="edit-button" onclick="enableEdit()">Edit</button>
+              <button type="button" class="edit-button" onclick="enableEdit(['hashtags', 'description'])">Edit</button>
               <button type="button" class="edit-button" th:attr="data-csrf-token=${_csrf.token}" th:onclick="|saveChanges(${photo.id})|">Save</button>
             </div>
           </div>
@@ -35,9 +35,14 @@
 
 
   <script>
-    function enableEdit() {
-      document.getElementById("hashtags").contentEditable = true;
-      document.getElementById("description").contentEditable = true;
+    // function enableEdit() {
+    //   document.getElementById("hashtags").contentEditable = true;
+    //   document.getElementById("description").contentEditable = true;
+    // }
+    const enableEdit = (elementIds) => {
+      elementIds.forEach(function (id) {
+        document.getElementById(id).contentEditable = true;
+      });
     }
 
     function saveChanges(photoId) {

@@ -68,8 +68,8 @@ public class ProfileController {
     @GetMapping("/feed")
     public String profileFeed(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long profileId = profileRepository.getProfileIdByUsername(authentication.getName());
-        List<Photo> photos = photoRepository.getAllPhotosByProfileId(profileId);
+        Long profileId = getProfileIdByUsername(authentication.getName());
+        List<Photo> photos = getAllPhotosByProfileId(profileId);
         model.addAttribute("photos", photos);
         LoggingSystem loggingSystem = new LoggingSystem(authentication.getName(), "opened the profile feed page", LocalDateTime.now());
         loggingSystemRepository.save(loggingSystem);
@@ -81,14 +81,14 @@ public class ProfileController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userRepository.getUserByUsername(username);
-        Profile profile = profileRepository.getProfileByUsername(username);
-        Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profile.getId());
+        User user = getUserByUsername(username);
+        Profile profile = getProfileByUsername(username);
+        Subscription subscription = getSubscriptionByProfileId(profile.getId());
         Consumption consumption = new Consumption(profile.getId(), LocalDate.now(), 0);
         try {
-            consumption = consumptionRepository.getConsumptionByProfileId(profile.getId(), LocalDate.now());
+            consumption = getConsumptionByProfileId(profile.getId());
         } catch (Exception e) {}
-        PackagePlan packagePlan = packageRepository.getPackageByPlan(subscription.getPackagePlan()); //
+        PackagePlan packagePlan = getPackageByPlan(subscription.getPackagePlan()); //
 
         model.addAttribute("user", user);
         model.addAttribute("profile", profile);
@@ -107,8 +107,8 @@ public class ProfileController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Profile profile = profileRepository.getProfileByUsername(username);
-        Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profile.getId());
+        Profile profile = getProfileByUsername(username);
+        Subscription subscription = getSubscriptionByProfileId(profile.getId());
         subscription.setNewPackage(plan);
         subscription.setDateOfLastChange(Calendar.getInstance().getTime());
         subscriptionRepository.savePlanChangeRequest(subscription);
@@ -138,10 +138,10 @@ public class ProfileController {
                               RedirectAttributes redirectAttributes) throws IOException {
 
         String username = principal.getName();
-        Long profileId = profileRepository.getProfileIdByUsername(username);
+        Long profileId = getProfileIdByUsername(username);
         Consumption consumption = new Consumption();
-        Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profileId);
-        PackagePlan chosenPlan = packageRepository.getPackageByPlan(subscription.getPackagePlan());
+        Subscription subscription = getSubscriptionByProfileId(profileId);
+        PackagePlan chosenPlan = getPackageByPlan(subscription.getPackagePlan());
         Long uploadSizeLimit = chosenPlan.getUploadSize();
 
         if (!image.isEmpty()) {
@@ -152,11 +152,11 @@ public class ProfileController {
                 return "redirect:/profile/post";            }
 
             try {
-                consumption = consumptionRepository.getConsumptionByProfileId(profileId, LocalDate.now());
+                consumption = getConsumptionByProfileId(profileId);
             } catch (Exception e) {
                 Consumption consumptionToInsert = new Consumption(profileId, LocalDate.now(),0);
                 consumptionRepository.save(consumptionToInsert);
-                consumption = consumptionRepository.getConsumptionByProfileId(profileId, LocalDate.now());
+                consumption = getConsumptionByProfileId(profileId);
             }
 
             if(consumption.getNumberOfUploadedPhotos() >= (chosenPlan.getDailyUploadLimit() - 1)) {
@@ -208,15 +208,15 @@ public class ProfileController {
     @GetMapping("/admin-view/{username}")
     public String showAdminViewOfAUser(@PathVariable String username, Model model) {
         model.addAttribute("username", username);
-        User user = userRepository.getUserByUsername(username);
-        Profile profile = profileRepository.getProfileByUsername(username);
-        Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profile.getId());
+        User user = getUserByUsername(username);
+        Profile profile = getProfileByUsername(username);
+        Subscription subscription = getSubscriptionByProfileId(profile.getId());
         Consumption consumption = new Consumption(profile.getId(), LocalDate.now(), 0);
         try {
-            consumption = consumptionRepository.getConsumptionByProfileId(profile.getId(), LocalDate.now());
+            consumption = getConsumptionByProfileId(profile.getId());
         } catch (Exception e) {}
-        PackagePlan packagePlan = packageRepository.getPackageByPlan(subscription.getPackagePlan()); //
-        List<Photo> photos = photoRepository.getAllPhotosByProfileId(profile.getId());
+        PackagePlan packagePlan = getPackageByPlan(subscription.getPackagePlan()); //
+        List<Photo> photos = getAllPhotosByProfileId(profile.getId());
 
         model.addAttribute("username", username);
         model.addAttribute("user", user);
@@ -233,8 +233,8 @@ public class ProfileController {
     public String adminChangesDataPlan(@PathVariable String username, @RequestParam("plan") String plan) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Profile profile = profileRepository.getProfileByUsername(username);
-        Subscription subscription = subscriptionRepository.getSubscriptionByProfileId(profile.getId());
+        Profile profile = getProfileByUsername(username);
+        Subscription subscription = getSubscriptionByProfileId(profile.getId());
         subscription.setNewPackage(plan);
         subscription.setDateOfLastChange(Calendar.getInstance().getTime());
         subscriptionRepository.savePlanChangeRequest(subscription);
@@ -253,6 +253,27 @@ public class ProfileController {
 //            }
 //        }
 //    }
+    private User getUserByUsername(String username) {
+        return userRepository.getUserByUsername(username);
+    }
+    private Profile getProfileByUsername(String username) {
+        return profileRepository.getProfileByUsername(username);
+    }
+    private PackagePlan getPackageByPlan (String plan) {
+        return packageRepository.getPackageByPlan(plan);
+    }
+    private Subscription getSubscriptionByProfileId(Long profileId) {
+        return subscriptionRepository.getSubscriptionByProfileId(profileId);
+    }
+    private Long getProfileIdByUsername(String username) {
+        return profileRepository.getProfileIdByUsername(username);
+    }
+    private Consumption getConsumptionByProfileId(Long profileId) {
+        return consumptionRepository.getConsumptionByProfileId(profileId, LocalDate.now());
+    }
+    private List<Photo> getAllPhotosByProfileId (Long profileId) {
+        return photoRepository.getAllPhotosByProfileId(profileId);
+    }
 
     public void parseHashtags(Long photoId, String hashtags) {
         String[] hashtagArray = hashtags.trim().split("(?<=\\s|\\#)(?=\\S)");
