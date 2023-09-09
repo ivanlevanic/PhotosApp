@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="fragments :: head" >
+</head>
+
+<body>
+  <div th:replace="fragments :: nav-bar"></div>
+  <link th:href="@{/css/post.css}" rel="stylesheet" />
+
+  <section class="main">
+    <div class="wrapper">
+      <div class="left-col">
+        <div th:each="photo : ${photos}" class="post">
+          <div class="info">
+            <div class="user">
+              <p class="username" th:text="${photo.profile.username}"></p>
+            </div>
+          </div>
+          <!--<img class="post-image" th:src="@{'data:image/png;base64,' + ${#strings.encodeBase64(photo.photo)}}" th:alt="${photo.description}">
+    <img class="post-image" th:src="@{'/images/' + ${photo.photo}}" th:alt="${photo.description}">-->
+          <img class="post-image" th:src="@{'/images/' + ${photo.photo}}" th:alt="${photo.description}">
+          <div class="post-content">
+            <p class="hashtags" th:id="@{'hashtags-' + ${photo.id}}" th:text="${photo.hashtags}"></p>
+            <p class="description">
+              <span th:text="${photo.description}" th:id="@{'description-' + ${photo.id}}"></span>
+            </p>
+            <p class="post-time" id="time" th:text="${photo.uploadTime}"></p>
+            <div>
+              <button type="button" class="edit-button" th:onclick="|enableEdit(${photo.id})|">Edit</button>
+              <button type="button" class="edit-button" th:attr="data-csrf-token=${_csrf.token}" th:onclick="|saveChanges(${photo.id})|">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <script>
+    // function enableEdit() {
+    //   document.getElementById("hashtags").contentEditable = true;
+    //   document.getElementById("description").contentEditable = true;
+    // }
+    const enableEdit = (photoId) => {
+      console.log('enableEdit function called');
+      ['hashtags-' + photoId, 'description-' + photoId].forEach(function (id) {
+        document.getElementById(id).contentEditable = true;
+      });
+    }
+
+    const saveChanges = (photoId) => {
+      var hashtags = document.getElementById("hashtags-" + photoId).innerText;
+      var description = document.getElementById("description-" + photoId).innerText;
+      var csrfToken = document.querySelector('[data-csrf-token]').getAttribute('data-csrf-token');
+
+      fetch('/profile/save-photo-changes/'+ photoId, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+          photoId: photoId,
+          hashtags: hashtags,
+          description: description
+        })
+      })
+              .then(response => {
+                console.log(response);
+              })
+              .catch(error => {
+                console.log("Saving description or hashtags failed. Error:" + error);
+              });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head th:replace="fragments :: head" ></head>
+<body>
+    <div th:replace="fragments :: js"></div>
+    <div th:replace="fragments :: nav-bar"></div>
+    <link th:href="@{/css/post.css}" rel="stylesheet" />
+    <link th:href="@{/css/search-bar.css}" rel="stylesheet" />
+
+    <script>
+        $(document).ready(function() {
+            $('#search-button').on('click', function() {
+                var searchText = $('#search-input').val();
+                var searchOption = $('#search-option').val();
+                var url = '/homepage?searchText=' + searchText + '&searchOption=' + searchOption;
+                window.location.href = url;
+            });
+        });
+    </script>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search">
+        <select id="search-option">
+            <option value="user">User</option>
+            <option value="description">Description</option>
+            <option value="hashtag">Hashtag</option>
+        </select>
+        <button type="button" id="search-button">Search</button>
+    </div>
+
+    <section class="main">
+        <div class="wrapper">
+            <div class="left-col">
+                <div th:each="photo : ${photos}" class="post">
+                    <div class="info">
+                        <div class="user">
+                            <a class="black-link" th:href="@{/profile/admin-view/{username}(username=${photo.profile.username})}" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:text="${photo.profile.username}"/>
+                            <p class="username" th:unless="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" th:text="${photo.profile.username}"></p>
+                        </div>
+                    </div>
+                    <!--<img class="post-image" th:src="@{'data:image/png;base64,' + ${#strings.encodeBase64(photo.photo)}}" th:alt="${photo.description}">-->
+                    <img class="post-image" th:src="@{'/images/' + ${photo.photo}}" th:alt="${photo.description}">
+                    <!--<img th:src="@{/images/image.jpg}" class="post-image" alt="">-->
+                    <div class="post-content">
+                        <!--<p th:text="${photo.photo}"></p>-->
+                        <p class="hashtags" th:text="${photo.hashtags}"></p>
+                        <p class="description">
+                            <span th:text="${photo.profile.username}"></span>
+                            <span th:text="${photo.description}"></span>
+                        </p>
+                        <p class="post-time" th:text="${photo.uploadTime}"></p>
+                        <a th:href="@{/images/{photoName}(photoName=${photo.photo})}" download="photo.jpg">
+                            Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
